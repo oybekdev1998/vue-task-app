@@ -1,23 +1,45 @@
 <template>
   <div class="container">
-    <Header title="Task Tracker" />
-    <Tasks @delete-task="deleteTask" :tasks="tasks" />
+    <Header
+      title="Task Tracker"
+      @toogle-add-task='toogleAddTask'
+      :showAddTask="showAddTask"
+    />
+    <div v-if="showAddTask">
+      <AddTask @add-task='addTask' />
+    </div>
+    <Tasks
+      @toogle-reminder="toogleReminder"
+      @delete-task="deleteTask" 
+      :tasks="tasks"
+    />
   </div>
 </template>
 <script>
   import Header from './components/Header.vue'
   import Tasks from './components/Tasks.vue'
+  import AddTask from './components/AddTask.vue'
 
 
   export default {
     data() {
         return {
-          tasks: []
+          tasks: [],
+          showAddTask: false
         }
     },
     methods: {
+      toogleAddTask() {
+        this.showAddTask = !this.showAddTask
+      },
       deleteTask(id) {
         this.tasks = this.tasks.filter((task) => task.id !== id)
+      },
+      toogleReminder(id) {
+        this.tasks = this.tasks.map((task) => task.id === id ? {...task, reminder: !task.reminder} : task)
+      },
+      addTask(task) {
+        this.tasks = [...this.tasks, task]
       }
     },
     created() {
@@ -42,7 +64,7 @@
         }
       ]
     },
-    components: { Header, Tasks }
+    components: { Header, Tasks, AddTask }
 }
 
 </script>
